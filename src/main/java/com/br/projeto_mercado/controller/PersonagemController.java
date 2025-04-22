@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.br.projeto_mercado.model.Personagem;
+import com.br.projeto_mercado.model.PersonagemFilter;
 import com.br.projeto_mercado.repository.PersonagemRepository;
+import com.br.projeto_mercado.specification.PersonagemSpecification;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,10 +37,10 @@ public class PersonagemController {
 
     @GetMapping
     @Cacheable(value = "personagens")
-    @Operation(summary = "Listar todos os personagens", description = "Lista todos os personagens salvos no banco de dados", tags = "Personagem")
-    public List<Personagem> index() {
-        log.info("Listando todos os personagens");
-        return repository.findAll();
+    @Operation(summary = "Listar todos os personagens com filtros", description = "Lista todos os personagens aplicando filtros opcionais", tags = "Personagem")
+    public List<Personagem> index(PersonagemFilter filter) {
+        log.info("Listando personagens com filtros: " + filter);
+        return repository.findAll(PersonagemSpecification.withFilters(filter));
     }
 
     @PostMapping
