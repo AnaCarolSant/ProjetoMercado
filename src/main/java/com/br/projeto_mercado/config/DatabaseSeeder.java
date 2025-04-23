@@ -1,14 +1,15 @@
 package com.br.projeto_mercado.config;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
+import com.br.projeto_mercado.model.Item;
+import com.br.projeto_mercado.model.ItemType;
 import com.br.projeto_mercado.model.Personagem;
-import com.br.projeto_mercado.model.PersonagemType;
+import com.br.projeto_mercado.model.Raridade;
+import com.br.projeto_mercado.repository.ItemRepository;
 import com.br.projeto_mercado.repository.PersonagemRepository;
 
 import jakarta.annotation.PostConstruct;
@@ -17,24 +18,60 @@ import jakarta.annotation.PostConstruct;
 public class DatabaseSeeder {
 
     @Autowired
+    private ItemRepository itemRepository;
+
+    @Autowired
     private PersonagemRepository personagemRepository;
 
     @PostConstruct
     public void init() {
-        var nomes = List.of("Arqueiro", "Mago", "Guerreiro", "Paladino", "Assassino", "Bárbaro", "Clérigo", "Druida");
-        var classes = PersonagemType.values();
 
-        var personagens = new ArrayList<Personagem>();
-        for (int i = 0; i < 20; i++) {
-            personagens.add(
-                    Personagem.builder()
-                            .nome(nomes.get(new Random().nextInt(nomes.size())))
-                            .classe(classes[new Random().nextInt(classes.length)])
-                            .nivel(1 + new Random().nextInt(99))
-                            .moedas(new Random().nextInt(1000))
-                            .build());
-        }
+        var personagem1 = Personagem.builder()
+                .nome("Guerreiro")
+                .classe(com.br.projeto_mercado.model.PersonagemType.GUERREIRO)
+                .nivel(10)
+                .moedas(500)
+                .build();
 
-        personagemRepository.saveAll(personagens);
+        var personagem2 = Personagem.builder()
+                .nome("Mago")
+                .classe(com.br.projeto_mercado.model.PersonagemType.MAGO)
+                .nivel(15)
+                .moedas(1000)
+                .build();
+
+        personagemRepository.saveAll(List.of(personagem1, personagem2));
+
+        var itens = List.of(
+                Item.builder()
+                        .nome("Espada Lendária")
+                        .tipo(ItemType.ARMA)
+                        .raridade(Raridade.LENDARIO)
+                        .preco(1500.0)
+                        .dono(personagem1)
+                        .build(),
+                Item.builder()
+                        .nome("Escudo Épico")
+                        .tipo(ItemType.ARMADURA)
+                        .raridade(Raridade.EPICO)
+                        .preco(800.0)
+                        .dono(personagem1)
+                        .build(),
+                Item.builder()
+                        .nome("Poção de Vida")
+                        .tipo(ItemType.POÇÃO)
+                        .raridade(Raridade.COMUM)
+                        .preco(50.0)
+                        .dono(personagem2)
+                        .build(),
+                Item.builder()
+                        .nome("Anel Mágico")
+                        .tipo(ItemType.ACESSÓRIO)
+                        .raridade(Raridade.RARO)
+                        .preco(300.0)
+                        .dono(personagem2)
+                        .build());
+
+        itemRepository.saveAll(itens);
     }
 }

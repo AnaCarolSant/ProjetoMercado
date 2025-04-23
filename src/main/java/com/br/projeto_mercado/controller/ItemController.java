@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.br.projeto_mercado.model.Item;
+import com.br.projeto_mercado.model.ItemFilter;
 import com.br.projeto_mercado.repository.ItemRepository;
+import com.br.projeto_mercado.specification.ItemSpecification;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -34,10 +36,10 @@ public class ItemController {
 
     @GetMapping
     @Cacheable(value = "itens")
-    @Operation(summary = "Listar todos os itens", description = "Lista todos os itens disponíveis no mercado", tags = "Item")
-    public List<Item> index() {
-        log.info("Listando todos os itens");
-        return repository.findAll();
+    @Operation(summary = "Listar todos os itens com filtros", description = "Lista todos os itens aplicando filtros opcionais", tags = "Item")
+    public List<Item> index(ItemFilter filter) {
+        log.info("Listando itens com filtros: " + filter);
+        return repository.findAll(ItemSpecification.withFilters(filter));
     }
 
     @PostMapping
